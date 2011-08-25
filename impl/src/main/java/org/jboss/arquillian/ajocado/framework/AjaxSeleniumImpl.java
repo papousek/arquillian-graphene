@@ -91,8 +91,17 @@ public class AjaxSeleniumImpl extends ExtendedTypedSeleniumImpl implements AjaxS
      *            the context path url
      */
     public AjaxSeleniumImpl(String serverHost, int serverPort, Browser browser, URL contextPathURL) {
-        CommandProcessor commandProcessor = new HttpCommandProcessor(serverHost, serverPort,
-            browser.inSeleniumRepresentation(), contextPathURL.toString());
+        this(new HttpCommandProcessor(serverHost, serverPort,
+            browser.inSeleniumRepresentation(), contextPathURL.toString()));
+    }
+
+    /**
+     * Instantiates a new ajax selenium.
+     *
+     * @param commandProcessor
+     *            the command processor
+     */
+    public AjaxSeleniumImpl(CommandProcessor commandProcessor) {
         interceptionProxy = new CommandInterceptorProxyImpl(commandProcessor);
         selenium = new ExtendedSelenium(interceptionProxy.getCommandProcessorProxy());
         pageExtensions = new PageExtensionsImpl();
