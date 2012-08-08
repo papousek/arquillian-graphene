@@ -38,7 +38,13 @@
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-drone-webdriver</artifactId>
         </dependency>
-        
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+        </dependency>
+
         <!-- Selenium -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
