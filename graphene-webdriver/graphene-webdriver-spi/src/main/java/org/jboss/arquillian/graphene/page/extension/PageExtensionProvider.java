@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * Copyright 2012, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,27 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.arquillian.graphene;
+package org.jboss.arquillian.graphene.page.extension;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.graphene.configuration.GrapheneConfigurator;
-import org.jboss.arquillian.graphene.enricher.ComponentObjectsEnricher;
-import org.jboss.arquillian.graphene.page.extension.GraphenePageExtensionRegistrar;
-import org.jboss.arquillian.test.spi.TestEnricher;
+import java.util.List;
+
+import org.jboss.arquillian.test.spi.TestClass;
 
 /**
- * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
+ * Returns the list of {@link PageExtension} known by the given module.
+ *
+ * Those extensions will be registered in the system, so they can be loaded from external locations if necessary.
+ *
+ * @author Lukas Fryc
  */
-public class GrapheneExtension implements LoadableExtension {
+public interface PageExtensionProvider {
 
-    @Override
-    public void register(ExtensionBuilder builder) {
-        /* Configurator */
-        builder.observer(GrapheneConfigurator.class);
-        /* Component Objects */
-        builder.service(TestEnricher.class, ComponentObjectsEnricher.class);
-        /** Page Extensions */
-        builder.observer(GraphenePageExtensionRegistrar.class);
-    }
-
+    List<PageExtension> getPageExtensions(TestClass testClass);
 }

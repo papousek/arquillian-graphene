@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * Copyright 2012, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,27 +19,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.arquillian.graphene;
+package org.jboss.arquillian.graphene.page.extension;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.graphene.configuration.GrapheneConfigurator;
-import org.jboss.arquillian.graphene.enricher.ComponentObjectsEnricher;
-import org.jboss.arquillian.graphene.page.extension.GraphenePageExtensionRegistrar;
-import org.jboss.arquillian.test.spi.TestEnricher;
+import java.util.Collection;
 
 /**
+ * Denotes extension to be injected to the page
+ *
+ * @author Lukas Fryc
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
-public class GrapheneExtension implements LoadableExtension {
+public interface PageExtension {
 
-    @Override
-    public void register(ExtensionBuilder builder) {
-        /* Configurator */
-        builder.observer(GrapheneConfigurator.class);
-        /* Component Objects */
-        builder.service(TestEnricher.class, ComponentObjectsEnricher.class);
-        /** Page Extensions */
-        builder.observer(GraphenePageExtensionRegistrar.class);
-    }
+    /**
+     * Returns the name of the script that can uniquely identify this script
+     */
+    String getName();
+
+    /**
+     * Returns the source code of the script to be injected to the page
+     */
+    JavaScript getExtensionScript();
+
+    /**
+     * Returns the source code of the script which will be executed to check
+     * whether the extension is already installed. The script has to return
+     * boolean value.
+     */
+    JavaScript getInstallationDetectionScript();
+
+    /**
+     * Returns a collection of extension names required by this extension
+     */
+    Collection<String> getRequired();
 
 }

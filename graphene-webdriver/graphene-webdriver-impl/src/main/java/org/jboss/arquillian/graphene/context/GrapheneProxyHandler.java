@@ -97,6 +97,10 @@ class GrapheneProxyHandler implements MethodInterceptor, InvocationHandler {
 
         Object result = invokeReal(method, args);
 
+        if (result == null) {
+            return null;
+        }
+
         if (isProxyable(method, args)) {
             Class<?>[] interfaces = GrapheneProxyUtil.getInterfaces(result.getClass());
             return GrapheneProxy.getProxyForTargetWithInterfaces(result, interfaces);
