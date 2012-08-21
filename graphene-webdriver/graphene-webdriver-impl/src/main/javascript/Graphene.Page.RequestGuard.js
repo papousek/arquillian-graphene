@@ -1,6 +1,6 @@
-/**
+/*
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat, Inc. and individual contributors
+ * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,22 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.arquillian.graphene.context;
+Document.Graphene = Document.Graphene || {};
 
-/**
- * <p>
- * Marker interface for all instances of proxies created by {@link GrapheneProxy}.
- * </p>
- *
- * @author Lukas Fryc
- */
-public interface GrapheneProxyInstance {
+Document.Graphene.Page = Document.Graphene.Page || {};
 
-    void registerInterceptor(Interceptor interceptor);
+Document.Graphene.Page.RequestGuard = {
 
-    Interceptor unregisterInterceptor(Interceptor interceptor);
+	requestDone : "HTTP",
 
-    <T> T copy();
+	getRequestDone : function() {
+		return this.requestDone;
+	},
 
-    <T> T unwrap();
-}
+	setRequestDone : function(requestType) {
+		this.requestDone = requestType;
+	},
+
+	clearRequestDone : function() {
+		var result = this.requestDone;
+		this.requestDone = "NONE";
+		return result;
+	},
+
+    install: function() {
+        Document.Graphene.xhrInterception.onreadystatechange(
+            function(context, args) {
+                Document.Graphene.Page.RequestGuard.requestDone = "XHR";
+                context.proceed(args);
+            }
+        );
+    }
+};

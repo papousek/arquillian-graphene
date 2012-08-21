@@ -25,6 +25,10 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -46,6 +50,7 @@ class GrapheneProxyHandler implements MethodInterceptor, InvocationHandler {
 
     private Object target;
     private FutureTarget future;
+    private Map<Class<?>, Interceptor> interceptors = new HashMap<Class<?>, Interceptor>();
 
     private GrapheneProxyHandler() {
     }
@@ -89,24 +94,76 @@ class GrapheneProxyHandler implements MethodInterceptor, InvocationHandler {
      * invocation.
      */
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
         // handle the GrapheneProxyInstance's method unwrap
         if (method.equals(GrapheneProxyInstance.class.getMethod("unwrap"))) {
             return getTarget();
         }
-
-        Object result = invokeReal(method, args);
-
-        if (result == null) {
+        // handle GrapheneProxyInstance's method registerInterceptor
+        if (method.equals(GrapheneProxyInstance.class.getMethod("registerInterceptor", Interceptor.class))) {
+            Interceptor interceptor = (Interceptor) args[0];
+            if (interceptor == null) {
+                throw new IllegalArgumentException("The parameter [interceptor] is null.");
+            }
+            interceptors.put(interceptor.getClass(), interceptor);
             return null;
         }
-
-        if (isProxyable(method, args)) {
-            Class<?>[] interfaces = GrapheneProxyUtil.getInterfaces(result.getClass());
-            return GrapheneProxy.getProxyForTargetWithInterfaces(result, interfaces);
+        // handle GrapheneProxyInstance's method unregisterInterceptor
+        if (method.equals(GrapheneProxyInstance.class.getMethod("unregisterInterceptor", Interceptor.class))) {
+            Interceptor interceptor = (Interceptor) args[0];
+            if (interceptor == null) {
+                throw new IllegalArgumentException("The parameter [interceptor] is null.");
+            }
+            return interceptors.remove(interceptor.getClass());
+        }
+        // handle GrapheneProxyInstance's method copy
+        if (method.equals(GrapheneProxyInstance.class.getMethod("copy"))) {
+            GrapheneProxyInstance clone;
+            if (this.future != null) {
+                clone = (GrapheneProxyInstance) GrapheneProxy.getProxyForFutureTarget(this.future, this.getTarget().getClass());
+            } else {
+                clone = (GrapheneProxyInstance) GrapheneProxy.getProxyForTarget(this.target);
+            }
+            for (Interceptor interceptor: interceptors.values()) {
+                clone.registerInterceptor(interceptor);
+            }
+            return clone;
         }
 
-        return result;
+        InvocationContext invocationContext = new InvocationContext() {
+
+            @Override
+            public Object invoke() throws Throwable {
+                Object result = invokeReal(method, args);
+                if (result == null) {
+                    return null;
+                }
+                if (isProxyable(method, args)) {
+                    Class<?>[] interfaces = GrapheneProxyUtil.getInterfaces(result.getClass());
+                    return GrapheneProxy.getProxyForTargetWithInterfaces(result, interfaces);
+                }
+                return result;
+            }
+
+            @Override
+            public Method getMethod() {
+                return method;
+            }
+
+            @Override
+            public Object[] getArguments() {
+                return args;
+            }
+
+            @Override
+            public Object getTarget() {
+                return GrapheneProxyHandler.this.getTarget();
+            }
+        };
+        for (Interceptor interceptor: interceptors.values()) {
+            invocationContext = new InvocationContextImpl(interceptor, invocationContext);
+        }
+        return invocationContext.invoke();
     }
 
     /**

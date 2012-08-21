@@ -21,20 +21,20 @@
  */
 package org.jboss.arquillian.graphene.context;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 /**
- * <p>
- * Marker interface for all instances of proxies created by {@link GrapheneProxy}.
- * </p>
- *
- * @author Lukas Fryc
+ * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
-public interface GrapheneProxyInstance {
+public interface InvocationContext {
 
-    void registerInterceptor(Interceptor interceptor);
+    Object invoke() throws Throwable;
 
-    Interceptor unregisterInterceptor(Interceptor interceptor);
+    Method getMethod();
 
-    <T> T copy();
+    Object[] getArguments();
 
-    <T> T unwrap();
+    Object getTarget();
+
 }

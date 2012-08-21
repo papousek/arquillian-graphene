@@ -54,7 +54,7 @@ public final class GrapheneProxy {
      * @return the proxy wrapping the target
      */
     @SuppressWarnings("unchecked")
-    static <T> T getProxyForTarget(T target) {
+    public static <T> T getProxyForTarget(T target) {
         GrapheneProxyHandler handler = GrapheneProxyHandler.forTarget(target);
         return (T) createProxy(handler, target.getClass());
     }

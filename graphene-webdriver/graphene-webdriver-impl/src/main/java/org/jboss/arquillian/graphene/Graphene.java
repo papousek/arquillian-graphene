@@ -29,6 +29,8 @@ import org.jboss.arquillian.graphene.condition.element.WebElementConditionFactor
 import org.jboss.arquillian.graphene.condition.locator.ElementLocatorConditionFactory;
 import org.jboss.arquillian.graphene.configuration.GrapheneConfiguration;
 import org.jboss.arquillian.graphene.context.GrapheneConfigurationContext;
+import org.jboss.arquillian.graphene.guard.RequestGuardFactory;
+import org.jboss.arquillian.graphene.page.RequestType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -72,6 +74,18 @@ public class Graphene {
      */
     public static ElementConditionFactory element(By locator) {
         return new ElementLocatorConditionFactory(locator);
+    }
+
+    public static <T> T guardHttp(T target) {
+        return RequestGuardFactory.guard(target, RequestType.HTTP);
+    }
+
+    public static <T> T guardNoRequest(T target) {
+        return RequestGuardFactory.guard(target, RequestType.NONE);
+    }
+
+    public static <T> T guardXhr(T target) {
+        return RequestGuardFactory.guard(target, RequestType.XHR);
     }
 
     public static WebDriverWait waitAjax() {

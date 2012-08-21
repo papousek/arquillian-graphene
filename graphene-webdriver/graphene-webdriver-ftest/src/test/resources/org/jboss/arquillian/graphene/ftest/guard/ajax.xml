@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<family result="successful ajax request &amp; response!">
+ <parents>
+ <father name="Mike" last="Brady" />
+ <mother name="Carol" last="Martin" />
+ </parents>
+ <children>
+  <sons>
+   <son>Greg</son>
+   <son>Peter</son>
+   <son>Bobby</son>
+  </sons>
+  <daughters>
+   <daughter>Marcia</daughter>
+   <daughter>Jan</daughter>
+   <daughter>Cindy</daughter>
+  </daughters>
+ </children>
+ <maid name="Alice" />
+</family>
