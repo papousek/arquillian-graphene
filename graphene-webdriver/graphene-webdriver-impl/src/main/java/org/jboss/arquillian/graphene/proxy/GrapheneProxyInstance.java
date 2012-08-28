@@ -21,10 +21,12 @@
  */
 package org.jboss.arquillian.graphene.proxy;
 
-import org.jboss.arquillian.graphene.context.Interceptor;
-
 /**
- * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
+ * <p>
+ * Marker interface for all instances of proxies created by {@link GrapheneProxy}.
+ * </p>
+ *
+ * @author Lukas Fryc
  */
 public interface GrapheneProxyInstance {
 
@@ -32,8 +34,7 @@ public interface GrapheneProxyInstance {
 
     Interceptor unregisterInterceptor(Interceptor interceptor);
 
-    Interceptor unregisterInterceptor(Class<? extends Interceptor> interceptorType);
+    <T> T copy();
 
     <T> T unwrap();
-
 }

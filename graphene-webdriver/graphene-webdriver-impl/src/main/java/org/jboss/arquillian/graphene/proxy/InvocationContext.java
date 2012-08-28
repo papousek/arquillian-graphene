@@ -19,15 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.arquillian.graphene.context;
+package org.jboss.arquillian.graphene.proxy;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
-public interface Interceptor {
+public interface InvocationContext {
 
-    Object intercept(InvocationContext context) throws Throwable;
+    Object invoke() throws Throwable;
+
+    Method getMethod();
+
+    Object[] getArguments();
+
+    Object getTarget();
 
 }

@@ -21,10 +21,10 @@
  */
 package org.jboss.arquillian.graphene.guard;
 
-import org.jboss.arquillian.graphene.context.GrapheneProxy;
-import org.jboss.arquillian.graphene.context.GrapheneProxyInstance;
-import org.jboss.arquillian.graphene.context.Interceptor;
-import org.jboss.arquillian.graphene.context.InvocationContext;
+import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
+import org.jboss.arquillian.graphene.proxy.GrapheneProxyInstance;
+import org.jboss.arquillian.graphene.proxy.Interceptor;
+import org.jboss.arquillian.graphene.proxy.InvocationContext;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.page.RequestType;
 

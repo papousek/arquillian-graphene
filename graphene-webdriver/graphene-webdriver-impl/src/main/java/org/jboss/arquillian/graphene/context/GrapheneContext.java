@@ -21,7 +21,9 @@
  */
 package org.jboss.arquillian.graphene.context;
 
-import org.jboss.arquillian.graphene.context.GrapheneProxy.FutureTarget;
+import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
+import org.jboss.arquillian.graphene.proxy.GrapheneProxyUtil;
+import org.jboss.arquillian.graphene.proxy.GrapheneProxy.FutureTarget;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
