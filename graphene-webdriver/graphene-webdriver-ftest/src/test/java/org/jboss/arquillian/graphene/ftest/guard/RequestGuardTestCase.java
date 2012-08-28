@@ -23,8 +23,8 @@ package org.jboss.arquillian.graphene.ftest.guard;
 
 import java.net.URL;
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.guard.RequestGuard;
+import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.page.RequestType;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
