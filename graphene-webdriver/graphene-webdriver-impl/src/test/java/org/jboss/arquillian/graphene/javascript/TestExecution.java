@@ -13,7 +13,7 @@ public class TestExecution extends AbstractJavaScriptTest {
     @JavaScript
     public static interface TestingInterface {
         public void method();
-        
+
         @MethodName("anotherMethodName")
         public void namedMethod();
     }
@@ -30,7 +30,7 @@ public class TestExecution extends AbstractJavaScriptTest {
         instance.method();
 
         // then
-        verify(executor, only()).executeScript(invocation("testingInterface", "method"));
+        verify(executor, only()).executeScript(invocation("TestingInterface", "method"));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class TestExecution extends AbstractJavaScriptTest {
         instance.namedMethod();
 
         // then
-        verify(executor, only()).executeScript(invocation("testingInterface", "anotherMethodName"));
+        verify(executor, only()).executeScript(invocation("TestingInterface", "anotherMethodName"));
     }
 
     @JavaScript("base")

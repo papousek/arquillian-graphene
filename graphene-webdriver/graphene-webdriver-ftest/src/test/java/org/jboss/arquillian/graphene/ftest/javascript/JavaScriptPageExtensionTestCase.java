@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.arquillian.graphene.ftest.page.extension;
+package org.jboss.arquillian.graphene.ftest.javascript;
 
 import java.net.URL;
 import java.util.List;
@@ -28,7 +28,6 @@ import org.jboss.arquillian.graphene.javascript.Dependency;
 import org.jboss.arquillian.graphene.javascript.InstallableJavaScript;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.javascript.JavaScript;
-import org.jboss.arquillian.graphene.page.extension.PageExtensionJavaScriptExecutionResolver;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.Assert;
@@ -46,7 +45,7 @@ public class JavaScriptPageExtensionTestCase {
     private WebDriver browser;
 
     public void loadPage() {
-        URL page = this.getClass().getClassLoader().getResource("org/jboss/arquillian/graphene/ftest/page/extension/sample.html");
+        URL page = this.getClass().getClassLoader().getResource("org/jboss/arquillian/graphene/ftest/javascript/sample.html");
         browser.get(page.toString());
     }
 
@@ -87,21 +86,21 @@ public class JavaScriptPageExtensionTestCase {
         List<WebElement> getElementsByTagName(String tagName);
     }
 
-    @JavaScript(value="fake", methodResolver=PageExtensionJavaScriptExecutionResolver.class)
+    @JavaScript(value="fake")
     @Dependency(interfaces={HelloWorld.class})
     public static interface Document2 {
         String getTitle();
     }
 
-    @JavaScript(value = "Document.helloworld", methodResolver = PageExtensionJavaScriptExecutionResolver.class)
-    @Dependency(sources = {"org/jboss/arquillian/graphene/ftest/page/extension/hello-world.js"})
+    @JavaScript(value = "Document.helloworld")
+    @Dependency(sources = {"org/jboss/arquillian/graphene/ftest/javascript/hello-world.js"})
     private interface HelloWorld extends InstallableJavaScript {
 
         String hello();
     }
 
-    @JavaScript(value = "Document.helloworld2", methodResolver = PageExtensionJavaScriptExecutionResolver.class)
-    @Dependency(sources = {"org/jboss/arquillian/graphene/ftest/page/extension/hello-world2.js"}, interfaces=HelloWorld.class)
+    @JavaScript(value = "Document.helloworld2")
+    @Dependency(sources = {"org/jboss/arquillian/graphene/ftest/javascript/hello-world2.js"}, interfaces=HelloWorld.class)
     private interface HelloWorld2 {
 
         String hello();

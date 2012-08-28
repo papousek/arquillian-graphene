@@ -24,7 +24,7 @@ package org.jboss.arquillian.graphene.ftest.guard;
 import java.net.URL;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
-import org.jboss.arquillian.graphene.guard.RequestGuardExpcetion;
+import org.jboss.arquillian.graphene.guard.RequestGuardException;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
 import org.junit.Test;
@@ -71,19 +71,19 @@ public class GuardsTestCase {
         Graphene.guardXhr(browser.findElement(By.id("xhr"))).click();
     }
 
-    @Test(expected=RequestGuardExpcetion.class)
+    @Test(expected=RequestGuardException.class)
     public void testGuardHttpFailure() {
         loadPage();
         Graphene.guardHttp(browser.findElement(By.id("xhr"))).click();
     }
 
-    @Test(expected=RequestGuardExpcetion.class)
+    @Test(expected=RequestGuardException.class)
     public void testGuardNoRequestFailure() {
         loadPage();
         Graphene.guardNoRequest(browser.findElement(By.id("http"))).click();
     }
 
-    @Test(expected=RequestGuardExpcetion.class)
+    @Test(expected=RequestGuardException.class)
     public void testGuardXhrFailure() {
         loadPage();
         Graphene.guardXhr(browser.findElement(By.id("http"))).click();

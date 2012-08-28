@@ -29,7 +29,7 @@ import org.jboss.arquillian.graphene.page.RequestType;
  * @author <a href="mailto:lfryc@redhat.com">Lukas Fryc</a>
  * @version $Revision$
  */
-public class RequestGuardExpcetion extends RuntimeException {
+public class RequestGuardException extends RuntimeException {
 
     private static final long serialVersionUID = -1945770825192733128L;
 
@@ -42,7 +42,7 @@ public class RequestGuardExpcetion extends RuntimeException {
      */
     private RequestType requestDone;
 
-    public RequestGuardExpcetion(RequestType requestExpected, RequestType requestDone) {
+    public RequestGuardException(RequestType requestExpected, RequestType requestDone) {
         this.requestExpected = requestExpected;
         this.requestDone = requestDone;
     }

@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-Document.Graphene = Document.Graphene || {};
+window.Graphene = window.Graphene || {};
 
 /**
  * The XMLHttpRequest injection providing ability to intercept requests.
  */
-Document.Graphene.xhrInterception = {
+window.Graphene.xhrInterception = {
     /**
      * Flags for different implementations of XHR
      */
@@ -42,22 +42,22 @@ Document.Graphene.xhrInterception = {
      */
     wrapperPrototype: {
         abort : function() {
-            return Document.Graphene.xhrInterception.invokeInterceptorChain(this, 'abort', arguments);
+            return window.Graphene.xhrInterception.invokeInterceptorChain(this, 'abort', arguments);
         },
         open : function() {
-            return Document.Graphene.xhrInterception.invokeInterceptorChain(this, 'open', arguments);
+            return window.Graphene.xhrInterception.invokeInterceptorChain(this, 'open', arguments);
         },
         getAllResponseHeaders : function() {
-            return Document.Graphene.xhrInterception.invokeInterceptorChain(this, 'getAllResponseHeaders', arguments);
+            return window.Graphene.xhrInterception.invokeInterceptorChain(this, 'getAllResponseHeaders', arguments);
         },
         getResponseHeader : function() {
-            return Document.Graphene.xhrInterception.invokeInterceptorChain(this, 'getResponseHeader', arguments);
+            return window.Graphene.xhrInterception.invokeInterceptorChain(this, 'getResponseHeader', arguments);
         },
         send : function() {
-            return Document.Graphene.xhrInterception.invokeInterceptorChain(this, 'send', arguments);
+            return window.Graphene.xhrInterception.invokeInterceptorChain(this, 'send', arguments);
         },
         setRequestHeader : function() {
-            return Document.Graphene.xhrInterception.invokeInterceptorChain(this, 'setRequestHeader', arguments);
+            return window.Graphene.xhrInterception.invokeInterceptorChain(this, 'setRequestHeader', arguments);
         },
         onreadystatechange : undefined
     },
@@ -83,8 +83,8 @@ Document.Graphene.xhrInterception = {
      */
     createReplacement: function() {
         var Replacement = function() {
-            this.xhr = new Document.Graphene.xhrInterception.original();
-            this.xhr.onreadystatechange = Document.Graphene.xhrInterception.callback(this);
+            this.xhr = new window.Graphene.xhrInterception.original();
+            this.xhr.onreadystatechange = window.Graphene.xhrInterception.callback(this);
         };
         Replacement.prototype = this.wrapperPrototype;
         return Replacement;
@@ -104,7 +104,7 @@ Document.Graphene.xhrInterception = {
                 wrapper.status = this.status;
                 wrapper.statusText = this.statusText;
             }
-            Document.Graphene.xhrInterception.invokeInterceptorChain(wrapper, 'onreadystatechange', [ wrapper ]);
+            window.Graphene.xhrInterception.invokeInterceptorChain(wrapper, 'onreadystatechange', [ wrapper ]);
         };
     },
 
@@ -168,7 +168,7 @@ Document.Graphene.xhrInterception = {
             xhrOriginal : wrapper.xhr,
             xhrWrapper : wrapper,
             proceed : function() {
-                return Document.Graphene.xhrInterception.invokeInterceptorChain(wrapper, methodName, args, i + 1);
+                return window.Graphene.xhrInterception.invokeInterceptorChain(wrapper, methodName, args, i + 1);
             }
         };
         var interceptor = this.interceptors[methodName][i];

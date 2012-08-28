@@ -34,7 +34,7 @@ public class JSTarget {
 
     public String getName() {
         if ("".equals(javascriptAnnotation.value())) {
-            return null;
+            return getInterface().getSimpleName();
         }
         return javascriptAnnotation.value();
     }

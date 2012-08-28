@@ -56,7 +56,7 @@ public class RemotePageExtensionInstallatorProvider extends AbstractPageExtensio
             public boolean isInstalled() {
                 Object result = ((JavascriptExecutor) driver).executeScript(extension.getInstallationDetectionScript().getSourceCode());
                 if (!(result instanceof Boolean)) {
-                    throw new IllegalStateException("The result of installation detection script is not boolean as expected.");
+                    throw new IllegalStateException("The result of installation detection script is not boolean as expected, " + result + " given.");
                 }
                 return (Boolean) result;
             }

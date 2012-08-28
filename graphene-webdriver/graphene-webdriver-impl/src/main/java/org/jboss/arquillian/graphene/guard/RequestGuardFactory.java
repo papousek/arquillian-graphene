@@ -53,7 +53,7 @@ public class RequestGuardFactory {
                 guard.clearRequestDone();
                 Object result =  context.invoke();
                 if (!guard.getRequestDone().equals(requestExpected)) {
-                    throw new RequestGuardExpcetion(requestExpected, guard.getRequestDone());
+                    throw new RequestGuardException(requestExpected, guard.getRequestDone());
                 }
                 return result;
             }

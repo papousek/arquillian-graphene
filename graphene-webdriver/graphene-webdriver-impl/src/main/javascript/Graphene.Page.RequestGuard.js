@@ -19,11 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-Document.Graphene = Document.Graphene || {};
+window.Graphene = window.Graphene || {};
 
-Document.Graphene.Page = Document.Graphene.Page || {};
+window.Graphene.Page = window.Graphene.Page || {};
 
-Document.Graphene.Page.RequestGuard = {
+window.Graphene.Page.RequestGuard = {
 
 	requestDone : "HTTP",
 
@@ -42,9 +42,9 @@ Document.Graphene.Page.RequestGuard = {
 	},
 
     install: function() {
-        Document.Graphene.xhrInterception.onreadystatechange(
+        window.Graphene.xhrInterception.onreadystatechange(
             function(context, args) {
-                Document.Graphene.Page.RequestGuard.requestDone = "XHR";
+                window.Graphene.Page.RequestGuard.requestDone = "XHR";
                 context.proceed(args);
             }
         );
