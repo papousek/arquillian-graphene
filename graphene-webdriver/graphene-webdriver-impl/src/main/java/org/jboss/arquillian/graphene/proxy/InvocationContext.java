@@ -21,7 +21,6 @@
  */
 package org.jboss.arquillian.graphene.proxy;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -29,12 +28,26 @@ import java.lang.reflect.Method;
  */
 public interface InvocationContext {
 
+    /**
+     * Method for invocation of the original method in interception mechanism.
+     * @return the result of command invocation
+     * @throws Throwable
+     */
     Object invoke() throws Throwable;
 
+    /**
+     * @return the intercepted method
+     */
     Method getMethod();
 
+    /**
+     * @return arguments passed to the given method invocation
+     */
     Object[] getArguments();
 
+    /**
+     * @return the target object of the method invocation
+     */
     Object getTarget();
 
 }

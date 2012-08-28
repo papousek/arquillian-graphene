@@ -22,7 +22,6 @@
 package org.jboss.arquillian.graphene.page.extension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import org.jboss.arquillian.graphene.javascript.Dependency;

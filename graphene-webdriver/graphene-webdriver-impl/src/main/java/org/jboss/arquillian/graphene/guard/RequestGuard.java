@@ -10,8 +10,15 @@ import org.jboss.arquillian.graphene.page.interception.XhrInterception;
 @Dependency(sources = "Graphene.Page.RequestGuard.js", interfaces=XhrInterception.class)
 public interface RequestGuard extends InstallableJavaScript {
 
+    /**
+     * @return the last request type
+     */
     RequestType getRequestDone();
 
+    /**
+     * Clears the request type cache and returns the last request type
+     * @return the last request type
+     */
     RequestType clearRequestDone();
 
 }

@@ -21,18 +21,28 @@
  */
 package org.jboss.arquillian.graphene.guard;
 
+import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
+import org.jboss.arquillian.graphene.page.RequestType;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxyInstance;
 import org.jboss.arquillian.graphene.proxy.Interceptor;
 import org.jboss.arquillian.graphene.proxy.InvocationContext;
-import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
-import org.jboss.arquillian.graphene.page.RequestType;
 
 /**
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
 public class RequestGuardFactory {
 
+    /**
+     * Returns the guarded object checking whether the request of the given type
+     * is done during each method invocation. If the request is not found, the
+     * {@link RequestGuardException} is thrown.
+     *
+     * @param <T> type of the given target
+     * @param target object to be guarded
+     * @param requestExpected the request type being checked after each method invocation
+     * @return the guarded object
+     */
     public static <T> T guard(T target, final RequestType requestExpected) {
         if (requestExpected == null) {
             throw new IllegalArgumentException("The paremeter [requestExpected] is null.");

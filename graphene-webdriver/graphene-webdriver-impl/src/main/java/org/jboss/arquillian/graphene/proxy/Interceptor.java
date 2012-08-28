@@ -21,13 +21,28 @@
  */
 package org.jboss.arquillian.graphene.proxy;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
+ * <p>
+ * Interface for implementers of interception.
+ * </p>
+ *
+ * <p>
+ * Each implementor must satisfy, that in the {@link #intercept(InvocationContext)} method body will be called at least
+ * once method from current context {@link InvocationContext#invoke()}.
+ * </p>
+ *
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
 public interface Interceptor {
 
+    /**
+     * When processing custom logic must satisfy, that at least once will be called method
+     * {@link InvocationContext#invoke()}.
+     *
+     * @param context the current invocation context
+     * @return the result of invocation
+     * @throws Throwable
+     */
     Object intercept(InvocationContext context) throws Throwable;
 
 }

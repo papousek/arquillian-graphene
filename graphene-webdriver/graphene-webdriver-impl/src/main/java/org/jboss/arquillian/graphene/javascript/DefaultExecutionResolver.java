@@ -33,6 +33,9 @@ import org.jboss.arquillian.graphene.page.extension.JavaScriptPageExtension;
 import org.openqa.selenium.JavascriptExecutor;
 
 /**
+ * This resolver uses page extension mechanism to install needed JavaScript
+ * and other required extensions.
+ *
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
 public class DefaultExecutionResolver implements ExecutionResolver {
