@@ -41,11 +41,16 @@
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-drone-webdriver</artifactId>
         </dependency>
-        
+
         <!-- workaround for ARQ-1050 -->
         <dependency>
             <groupId>com.opera</groupId>
             <artifactId>operadriver</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.selenium</groupId>
+            <artifactId>selenium-phantomjs-driver</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -62,7 +67,7 @@
             <groupId>org.jboss.arquillian.config</groupId>
             <artifactId>arquillian-config-api</artifactId>
         </dependency>
-        
+
         <!-- Selenium dependencies -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

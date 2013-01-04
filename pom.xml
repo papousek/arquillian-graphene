@@ -30,7 +30,7 @@
 
         <!-- Arquillian -->
         <version.arquillian.core>1.0.3.Final</version.arquillian.core>
-        <version.arquillian.drone>1.1.0.Final</version.arquillian.drone>
+        <version.arquillian.drone>1.2.0.Final-SNAPSHOT</version.arquillian.drone>
 
         <!-- Runtime dependencies -->
         <version.javassist>3.12.1.GA</version.javassist>
