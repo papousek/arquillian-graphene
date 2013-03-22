@@ -7,6 +7,9 @@ package org.jboss.arquillian.graphene.enricher;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.graphene.configuration.GrapheneConfiguration;
 import org.jboss.arquillian.graphene.enricher.exception.GrapheneTestEnricherException;
 import org.jboss.arquillian.graphene.enricher.findby.FindByUtilities;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
@@ -19,13 +22,16 @@ import org.openqa.selenium.WebElement;
  */
 public class WebElementWrapperEnricher extends AbstractSearchContextEnricher {
 
+    @Inject
+    private Instance<GrapheneConfiguration> configuration;
+
     @Override
     public void enrich(final SearchContext searchContext, Object target) {
         List<Field> fields = FindByUtilities.getListOfFieldsAnnotatedWithFindBys(target);
         for (Field field: fields) {
             final Field finalField = field;
             if (isValidClass(field.getType())) {
-                final By rootBy = FindByUtilities.getCorrectBy(field);
+                final By rootBy = FindByUtilities.getCorrectBy(field, configuration.get().getDefaultElementLocatingStrategy());
                 try {
                     Object component = GrapheneProxy.getProxyForFutureTarget(new GrapheneProxy.FutureTarget() {
                         @Override

@@ -24,6 +24,7 @@ package org.jboss.arquillian.graphene.ftest.javascript;
 import java.net.URL;
 import java.util.List;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.javascript.Dependency;
 import org.jboss.arquillian.graphene.javascript.InstallableJavaScript;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
@@ -53,7 +54,7 @@ public class JavaScriptPageExtensionTestCase {
     @Test
     public void testWithoutSources() {
         loadPage();
-        Document document = JSInterfaceFactory.create(Document.class);
+        Document document = JSInterfaceFactory.create(Graphene.context(), Document.class);
         List<WebElement> elements = document.getElementsByTagName("html");
         Assert.assertNotNull(elements);
         Assert.assertEquals(1, elements.size());
@@ -62,27 +63,27 @@ public class JavaScriptPageExtensionTestCase {
     @Test
     public void testWithSources() {
         loadPage();
-        HelloWorld helloWorld = JSInterfaceFactory.create(HelloWorld.class);
+        HelloWorld helloWorld = JSInterfaceFactory.create(Graphene.context(), HelloWorld.class);
         Assert.assertEquals("Hello World!", helloWorld.hello());
     }
 
     @Test
     public void testWithInterfaceDependencies() {
         loadPage();
-        HelloWorld2 helloWorld = JSInterfaceFactory.create(HelloWorld2.class);
+        HelloWorld2 helloWorld = JSInterfaceFactory.create(Graphene.context(), HelloWorld2.class);
         Assert.assertEquals("Hello World!", helloWorld.hello());
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testWithoutSourceAndWithInterfaceDependencies() {
         loadPage();
-        JSInterfaceFactory.create(Document2.class).getTitle();
+        JSInterfaceFactory.create(Graphene.context(), Document2.class).getTitle();
     }
-    
+
     @Test
     public void testAbstractClass() {
         loadPage();
-        Document3 document = JSInterfaceFactory.create(Document3.class);
+        Document3 document = JSInterfaceFactory.create(Graphene.context(), Document3.class);
         Assert.assertEquals(browser.findElement(By.tagName("h1")), document.getHeader());
     }
 
@@ -99,7 +100,7 @@ public class JavaScriptPageExtensionTestCase {
     public static interface Document2 {
         String getTitle();
     }
-    
+
     @JavaScript("document")
     public abstract class Document3 {
 

@@ -29,6 +29,7 @@ import java.util.Map;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import org.jboss.arquillian.graphene.enricher.ReflectionHelper;
 
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy.FutureTarget;
 
@@ -93,6 +94,17 @@ class GrapheneProxyHandler implements MethodInterceptor, InvocationHandler {
      */
     @Override
     public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
+        // handle finalizer
+        if (method.getName().equals("finalize") && method.getParameterTypes().length == 0) {
+            if (!method.isAccessible()) {
+                method.setAccessible(true);
+            }
+            Object target = getTarget();
+            if (target instanceof GrapheneProxyInstance) {
+                return ((GrapheneProxyInstance) target).unwrap();
+            }
+            method.invoke(target);
+        }
         // handle the GrapheneProxyInstance's method unwrap
         if (method.equals(GrapheneProxyInstance.class.getMethod("unwrap"))) {
             Object target = getTarget();

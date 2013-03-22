@@ -21,7 +21,6 @@
  */
 package org.jboss.arquillian.graphene.enricher.page.fragment;
 
-import org.jboss.arquillian.graphene.enricher.fragment.AbstractPageFragmentStub;
 import org.jboss.arquillian.graphene.spi.annotations.Root;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

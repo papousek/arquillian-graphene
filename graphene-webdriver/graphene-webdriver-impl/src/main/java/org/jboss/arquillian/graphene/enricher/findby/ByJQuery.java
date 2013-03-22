@@ -23,6 +23,7 @@ package org.jboss.arquillian.graphene.enricher.findby;
 
 import java.util.List;
 import org.jboss.arquillian.core.spi.Validate;
+import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -37,7 +38,7 @@ import org.openqa.selenium.WebElement;
 public class ByJQuery extends By {
 
     private final String jquerySelector;
-    private final JQuerySearchContext jQuerySearchContext = JSInterfaceFactory.create(JQuerySearchContext.class);
+    private final JQuerySearchContext jQuerySearchContext = JSInterfaceFactory.create(Graphene.context(), JQuerySearchContext.class);
 
     public ByJQuery(String jquerySelector) {
         Validate.notNull(jquerySelector, "Cannot find elements when jquerySelector is null!");

@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.openqa.selenium.WebDriver;
 
@@ -41,10 +41,12 @@ public class GrapheneEnricher implements TestEnricher {
 
     @Inject
     private Instance<ServiceLoader> serviceLoader;
+    @Inject
+    private Instance<GrapheneContext> grapheneContext;
 
     @Override
     public void enrich(Object o) {
-        final WebDriver driver = GrapheneContext.getProxy();
+        final WebDriver driver = grapheneContext.get().getWebDriver();
         for (SearchContextTestEnricher enricher: serviceLoader.get().all(SearchContextTestEnricher.class)) {
             enricher.enrich(driver, o);
         }

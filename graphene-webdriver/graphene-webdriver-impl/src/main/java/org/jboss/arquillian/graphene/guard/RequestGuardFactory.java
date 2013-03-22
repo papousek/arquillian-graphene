@@ -21,12 +21,10 @@
  */
 package org.jboss.arquillian.graphene.guard;
 
-import static org.jboss.arquillian.graphene.Graphene.waitModel;
+import com.google.common.base.Predicate;
 
 import java.util.concurrent.TimeUnit;
-
-import org.jboss.arquillian.graphene.context.GrapheneConfigurationContext;
-import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
+import static org.jboss.arquillian.graphene.Graphene.waitModel;
 import org.jboss.arquillian.graphene.page.RequestType;
 import org.jboss.arquillian.graphene.page.document.Document;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
@@ -35,17 +33,22 @@ import org.jboss.arquillian.graphene.proxy.Interceptor;
 import org.jboss.arquillian.graphene.proxy.InvocationContext;
 import org.openqa.selenium.WebDriver;
 
-import com.google.common.base.Predicate;
-
 /**
  * @author <a href="mailto:jpapouse@redhat.com">Jan Papousek</a>
  */
 public class RequestGuardFactory {
 
-    private static RequestGuard guard = JSInterfaceFactory.create(RequestGuard.class);
-    private static Document document = JSInterfaceFactory.create(Document.class);
+    private final RequestGuard guard;// = JSInterfaceFactory.create(RequestGuard.class);
+    private final Document document; //= JSInterfaceFactory.create(Document.class);
+    private final DocumentReady documentReady = new DocumentReady();
 
-    private static DocumentReady documentReady = new DocumentReady();
+    private final long waitGuardInterval;
+
+    public RequestGuardFactory(RequestGuard guard, Document document, long waitGuardInterval) {
+        this.guard = guard;
+        this.document = document;
+        this.waitGuardInterval = waitGuardInterval;
+    }
 
     /**
      * Returns the guarded object checking whether the request of the given type is done during each method invocation. If the
@@ -56,7 +59,7 @@ public class RequestGuardFactory {
      * @param requestExpected the request type being checked after each method invocation
      * @return the guarded object
      */
-    public static <T> T guard(T target, final RequestType requestExpected) {
+    public <T> T guard(T target, final RequestType requestExpected) {
         if (requestExpected == null) {
             throw new IllegalArgumentException("The paremeter [requestExpected] is null.");
         }
@@ -78,8 +81,8 @@ public class RequestGuardFactory {
                 Object result = context.invoke();
 
                 final long timeout = System.currentTimeMillis()
-                        + TimeUnit.SECONDS.toMillis(GrapheneConfigurationContext.getProxy().getWaitGuardInterval());
-                final long toSleep = Math.min(GrapheneConfigurationContext.getProxy().getWaitGuardInterval() * 100, 200);
+                        + TimeUnit.SECONDS.toMillis(waitGuardInterval);
+                final long toSleep = Math.min(waitGuardInterval * 100, 200);
 
                 while (System.currentTimeMillis() < timeout) {
                     RequestType requestDone = guard.getRequestDone();
@@ -110,7 +113,8 @@ public class RequestGuardFactory {
         return (T) proxy;
     }
 
-    private static class DocumentReady implements Predicate<WebDriver> {
+    private class DocumentReady implements Predicate<WebDriver> {
+        @Override
         public boolean apply(WebDriver arg0) {
             return "complete".equals(document.getReadyState());
         }

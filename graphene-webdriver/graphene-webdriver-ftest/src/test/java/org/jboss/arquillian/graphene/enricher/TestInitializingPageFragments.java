@@ -29,16 +29,15 @@ import java.net.URL;
 import java.util.List;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
-import org.jboss.arquillian.graphene.enricher.fragment.AbstractPageFragmentStub;
+import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.enricher.page.EmbeddedPage;
 import org.jboss.arquillian.graphene.enricher.page.TestPage;
+import org.jboss.arquillian.graphene.enricher.page.fragment.AbstractPageFragmentStub;
 import org.jboss.arquillian.graphene.enricher.page.fragment.PageFragmentWithEmbeddedAnotherPageFragmentStub;
 import org.jboss.arquillian.graphene.spi.annotations.Page;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.HasInputDevices;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -139,7 +138,7 @@ public class TestInitializingPageFragments {
     public void testSupportForAdvancedActions() {
         loadPage();
 
-        WebDriver driver = GrapheneContext.getProxyForInterfaces(HasInputDevices.class);
+        WebDriver driver = Graphene.context().getWebDriver();
         Actions builder = new Actions(driver);
 
         // following tests usage of Actions with injected plain WebElement

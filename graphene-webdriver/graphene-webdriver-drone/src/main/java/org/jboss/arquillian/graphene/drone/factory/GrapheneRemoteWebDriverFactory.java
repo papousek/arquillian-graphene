@@ -21,13 +21,16 @@
  */
 package org.jboss.arquillian.graphene.drone.factory;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.RemoteReusableWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.RemoteWebDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
@@ -40,26 +43,18 @@ public class GrapheneRemoteWebDriverFactory extends RemoteWebDriverFactory imple
         Configurator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>>,
         Instantiator<RemoteWebDriver, TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration>>, Destructor<RemoteWebDriver> {
 
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
+
     @Override
     public int getPrecedence() {
         return 20;
     }
 
     @Override
-    public void destroyInstance(RemoteWebDriver instance) {
-        try {
-            super.destroyInstance(instance);
-        } finally {
-            GrapheneContext.reset();
-        }
-    }
-
-    @Override
     public RemoteWebDriver createInstance(TypedWebDriverConfiguration<RemoteReusableWebDriverConfiguration> configuration) {
         RemoteWebDriver driver = super.createInstance(configuration);
-        RemoteWebDriver proxy = GrapheneContext.getProxyForDriver(RemoteWebDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, RemoteWebDriver.class);
     }
 
 }

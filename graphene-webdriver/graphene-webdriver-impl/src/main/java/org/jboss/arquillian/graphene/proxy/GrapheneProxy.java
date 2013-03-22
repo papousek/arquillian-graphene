@@ -157,4 +157,19 @@ public final class GrapheneProxy {
 
         Object getTarget();
     }
+
+    public static class ConstantFutureTarget implements FutureTarget {
+
+        private final Object target;
+
+        public ConstantFutureTarget(Object target) {
+            this.target = target;
+        }
+
+        @Override
+        public Object getTarget() {
+            return target;
+        }
+
+    }
 }

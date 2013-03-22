@@ -21,13 +21,16 @@
  */
 package org.jboss.arquillian.graphene.drone.factory;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.IPhoneDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.IPhoneDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 import org.openqa.selenium.iphone.IPhoneDriver;
 
 /**
@@ -39,6 +42,9 @@ import org.openqa.selenium.iphone.IPhoneDriver;
 public class GrapheneIPhoneDriverFactory extends IPhoneDriverFactory implements
         Configurator<IPhoneDriver, TypedWebDriverConfiguration<IPhoneDriverConfiguration>>,
         Instantiator<IPhoneDriver, TypedWebDriverConfiguration<IPhoneDriverConfiguration>>, Destructor<IPhoneDriver> {
+
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
 
     /*
      * (non-Javadoc)
@@ -53,27 +59,11 @@ public class GrapheneIPhoneDriverFactory extends IPhoneDriverFactory implements
     /*
      * (non-Javadoc)
      *
-     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-     */
-    @Override
-    public void destroyInstance(IPhoneDriver instance) {
-        try {
-            super.destroyInstance(instance);
-        } finally {
-            GrapheneContext.reset();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
     public IPhoneDriver createInstance(TypedWebDriverConfiguration<IPhoneDriverConfiguration> configuration) {
         IPhoneDriver driver = super.createInstance(configuration);
-        IPhoneDriver proxy = GrapheneContext.getProxyForDriver(IPhoneDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, IPhoneDriver.class);
     }
 }

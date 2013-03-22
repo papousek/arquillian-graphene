@@ -4,14 +4,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 
 import org.jboss.arquillian.core.spi.LoadableExtension.ExtensionBuilder;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy.FutureTarget;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxyInstance;
 import org.jboss.arquillian.graphene.proxy.Interceptor;
 import org.jboss.arquillian.graphene.proxy.InvocationContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.openqa.selenium.Capabilities;
@@ -38,6 +40,9 @@ import org.openqa.selenium.interactions.Actions;
  * @author Lukas Fryc
  */
 public abstract class SeleniumResourceProvider<T> implements ResourceProvider {
+
+    @Inject
+    private Instance<GrapheneContext> grapheneContext;
 
     public static class WebDriverProvider extends DirectProvider<WebDriver> {
     }
@@ -118,7 +123,7 @@ public abstract class SeleniumResourceProvider<T> implements ResourceProvider {
     }
 
     protected <BASE> BASE base() {
-        return GrapheneContext.getProxyForInterfaces(mediatorType);
+        return grapheneContext.get().getWebDriver(mediatorType);
     }
 
     protected Class<?> getTypeArgument(int i) {

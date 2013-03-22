@@ -1,17 +1,13 @@
 package org.jboss.arquillian.graphene.javascript;
 
-import org.jboss.arquillian.graphene.configuration.GrapheneConfiguration;
-import org.jboss.arquillian.graphene.context.GrapheneConfigurationContext;
+import org.jboss.arquillian.graphene.DefaultGrapheneContext;
+import org.jboss.arquillian.graphene.Graphene;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.jboss.arquillian.graphene.context.GrapheneContext;
-import org.jboss.arquillian.graphene.context.GraphenePageExtensionsContext;
-import org.jboss.arquillian.graphene.context.TestingDriverStub;
-import org.jboss.arquillian.graphene.page.extension.PageExtensionRegistryImpl;
-import org.jboss.arquillian.graphene.page.extension.RemotePageExtensionInstallatorProvider;
+import org.jboss.arquillian.graphene.TestingDriverStub;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -42,11 +38,8 @@ public class TestParameters extends AbstractJavaScriptTest {
     public void prepareTest() {
         // given
         MockitoAnnotations.initMocks(this);
-        GrapheneContext.set(executor);
-        GrapheneConfigurationContext.set(new GrapheneConfiguration());
-        GraphenePageExtensionsContext.setRegistry(new PageExtensionRegistryImpl());
-        GraphenePageExtensionsContext.setInstallatorProvider(new RemotePageExtensionInstallatorProvider(GraphenePageExtensionsContext.getRegistryProxy(), executor));
-        instance = JSInterfaceFactory.create(TestingInterface.class);
+        DefaultGrapheneContext.init(executor);
+        instance = JSInterfaceFactory.create(Graphene.context(), TestingInterface.class);
         when(executor.executeScript("return true;")).thenReturn(true);
     }
 

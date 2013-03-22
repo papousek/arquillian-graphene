@@ -23,7 +23,7 @@ package org.jboss.arquillian.graphene.enricher.page;
 
 import java.util.List;
 
-import org.jboss.arquillian.graphene.enricher.fragment.AbstractPageFragmentStub;
+import org.jboss.arquillian.graphene.enricher.page.fragment.AbstractPageFragmentStub;
 import org.jboss.arquillian.graphene.spi.annotations.Page;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

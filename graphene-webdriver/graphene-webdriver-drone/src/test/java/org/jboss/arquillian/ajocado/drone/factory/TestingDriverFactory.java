@@ -28,8 +28,8 @@ import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
-import org.jboss.arquillian.graphene.context.TestingDriver;
-import org.jboss.arquillian.graphene.context.TestingDriverStub;
+import org.jboss.arquillian.graphene.TestingDriver;
+import org.jboss.arquillian.graphene.TestingDriverStub;
 
 /**
  * @author Lukas Fryc

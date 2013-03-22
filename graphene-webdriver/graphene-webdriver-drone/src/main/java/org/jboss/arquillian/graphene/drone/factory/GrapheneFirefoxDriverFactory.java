@@ -21,13 +21,16 @@
  */
 package org.jboss.arquillian.graphene.drone.factory;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.FirefoxDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.FirefoxDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
@@ -39,6 +42,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 public class GrapheneFirefoxDriverFactory extends FirefoxDriverFactory implements
         Configurator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>,
         Instantiator<FirefoxDriver, TypedWebDriverConfiguration<FirefoxDriverConfiguration>>, Destructor<FirefoxDriver> {
+
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
 
     /*
      * (non-Javadoc)
@@ -53,28 +59,11 @@ public class GrapheneFirefoxDriverFactory extends FirefoxDriverFactory implement
     /*
      * (non-Javadoc)
      *
-     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-     */
-    @Override
-    public void destroyInstance(FirefoxDriver instance) {
-        try {
-            super.destroyInstance(instance);
-        } finally {
-            GrapheneContext.reset();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
     public FirefoxDriver createInstance(TypedWebDriverConfiguration<FirefoxDriverConfiguration> configuration) {
-
         FirefoxDriver driver = super.createInstance(configuration);
-        FirefoxDriver proxy = GrapheneContext.getProxyForDriver(FirefoxDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, FirefoxDriver.class);
     }
 }

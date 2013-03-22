@@ -22,13 +22,16 @@
 package org.jboss.arquillian.graphene.drone.factory;
 
 import com.opera.core.systems.OperaDriver;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.OperaDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.OperaDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 
 /**
  * Extends the {@link OperaDriverFactory} and provides the created instance to the {@link GrapheneContext}.
@@ -40,26 +43,18 @@ public class GrapheneOperaDriverFactory extends OperaDriverFactory implements
         Configurator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>,
         Instantiator<OperaDriver, TypedWebDriverConfiguration<OperaDriverConfiguration>>, Destructor<OperaDriver> {
 
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
+
     @Override
     public int getPrecedence() {
         return 20;
     }
 
     @Override
-    public void destroyInstance(OperaDriver instance) {
-        try {
-            super.destroyInstance(instance);
-        } finally {
-            GrapheneContext.reset();
-        }
-    }
-
-    @Override
     public OperaDriver createInstance(TypedWebDriverConfiguration<OperaDriverConfiguration> configuration) {
         OperaDriver driver = super.createInstance(configuration);
-        OperaDriver proxy = GrapheneContext.getProxyForDriver(OperaDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, OperaDriver.class);
     }
 
 }

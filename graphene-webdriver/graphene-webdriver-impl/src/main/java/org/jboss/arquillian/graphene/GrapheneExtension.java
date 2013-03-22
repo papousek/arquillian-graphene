@@ -31,8 +31,6 @@ import org.jboss.arquillian.graphene.enricher.PageObjectEnricher;
 import org.jboss.arquillian.graphene.enricher.SeleniumResourceProvider;
 import org.jboss.arquillian.graphene.enricher.WebElementWrapperEnricher;
 import org.jboss.arquillian.graphene.enricher.WebElementEnricher;
-import org.jboss.arquillian.graphene.enricher.WrapsElementInterceptor;
-import org.jboss.arquillian.graphene.page.extension.GraphenePageExtensionRegistrar;
 import org.jboss.arquillian.graphene.spi.enricher.SearchContextTestEnricher;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
@@ -46,6 +44,8 @@ public class GrapheneExtension implements LoadableExtension {
     public void register(ExtensionBuilder builder) {
         /* Configurator */
         builder.observer(GrapheneConfigurator.class);
+        /* Registrar */
+        builder.observer(GrapheneRegistrar.class);
         /* Component Objects */
         builder.service(TestEnricher.class, GrapheneEnricher.class);
         builder.service(SearchContextTestEnricher.class, WebElementEnricher.class);
@@ -54,8 +54,6 @@ public class GrapheneExtension implements LoadableExtension {
         builder.service(SearchContextTestEnricher.class, WebElementWrapperEnricher.class);
         /** Javascript enrichment */
         builder.service(TestEnricher.class, JavaScriptEnricher.class);
-        /** Page Extensions */
-        builder.observer(GraphenePageExtensionRegistrar.class);
         /* Resource Providers */
         builder.service(ResourceProvider.class, GrapheneConfigurationResourceProvider.class);
         SeleniumResourceProvider.registerAllProviders(builder);

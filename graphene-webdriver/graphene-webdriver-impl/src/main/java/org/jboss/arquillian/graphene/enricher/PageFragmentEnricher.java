@@ -29,6 +29,7 @@ import java.util.List;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.graphene.configuration.GrapheneConfiguration;
 import org.jboss.arquillian.graphene.enricher.exception.PageFragmentInitializationException;
 import org.jboss.arquillian.graphene.enricher.findby.FindByUtilities;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
@@ -50,6 +51,9 @@ public class PageFragmentEnricher extends AbstractSearchContextEnricher {
     @SuppressWarnings("unused")
     @Inject
     private Instance<ServiceLoader> serviceLoader;
+
+    @Inject
+    private Instance<GrapheneConfiguration> configuration;
 
     @Override
     public void enrich(SearchContext searchContext, Object target) {
@@ -136,14 +140,14 @@ public class PageFragmentEnricher extends AbstractSearchContextEnricher {
     protected final void setupPageFragmentList(SearchContext searchContext, Object target, Field field)
             throws ClassNotFoundException {
         //the by retrieved in this way is never null, by default it is ByIdOrName using field name
-        By rootBy = FindByUtilities.getCorrectBy(field);
+        By rootBy = FindByUtilities.getCorrectBy(field, configuration.get().getDefaultElementLocatingStrategy());
         List<?> pageFragments = createPageFragmentList(getListType(field), searchContext, rootBy);
         setValue(field, target, pageFragments);
     }
 
     protected final void setupPageFragment(SearchContext searchContext, Object target, Field field) {
         //the by retrieved in this way is never null, by default it is ByIdOrName using field name
-        By rootBy = FindByUtilities.getCorrectBy(field);
+        By rootBy = FindByUtilities.getCorrectBy(field, configuration.get().getDefaultElementLocatingStrategy());
         WebElement root = WebElementUtils.findElementLazily(rootBy, searchContext);
         Object pageFragment = createPageFragment(field.getType(), root);
         setValue(field, target, pageFragment);

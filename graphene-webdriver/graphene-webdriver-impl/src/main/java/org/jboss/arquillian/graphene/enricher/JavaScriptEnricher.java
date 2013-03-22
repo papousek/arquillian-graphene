@@ -24,7 +24,9 @@ package org.jboss.arquillian.graphene.enricher;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.graphene.GrapheneContext;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.javascript.JavaScript;
 import org.jboss.arquillian.test.spi.TestEnricher;
@@ -36,6 +38,9 @@ import org.openqa.selenium.WebDriver;
  */
 public class JavaScriptEnricher implements TestEnricher {
 
+    @Inject
+    private Instance<GrapheneContext> grapheneContext;
+
     @Override
     public void enrich(Object o) {
         Collection<Field> fields = ReflectionHelper.getFieldsWithAnnotation(o.getClass(), JavaScript.class);
@@ -45,7 +50,7 @@ public class JavaScriptEnricher implements TestEnricher {
             }
             try {
                 field.set(o, JSInterfaceFactory.create(
-                        (WebDriver) GrapheneContext.getProxyForInterfaces(JavascriptExecutor.class),
+                        grapheneContext.get(),
                         field.getType()));
             } catch (Exception e) {
                 throw new IllegalStateException("Can't inject value to the field '" + field.getName() + "' declared in class '" + field.getDeclaringClass().getName() +"'");

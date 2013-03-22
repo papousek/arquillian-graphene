@@ -21,6 +21,7 @@
  */
 package org.jboss.arquillian.ajocado.drone.factory;
 
+import java.util.List;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -36,13 +37,15 @@ import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
-import org.jboss.arquillian.graphene.configuration.GrapheneConfiguration;
-import org.jboss.arquillian.graphene.context.GrapheneConfigurationContext;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.Graphene;
+import org.jboss.arquillian.graphene.GrapheneRegistrar;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxyInstance;
-import org.jboss.arquillian.graphene.context.TestingDriver;
+import org.jboss.arquillian.graphene.TestingDriver;
+import org.jboss.arquillian.graphene.configuration.GrapheneConfigurator;
 import org.jboss.arquillian.graphene.drone.factory.GrapheneWebDriverFactory;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,12 +75,19 @@ public class GrapheneWebDriverFactoryTestCase extends AbstractDroneTestCase {
     @Mock(extraInterfaces = GrapheneProxyInstance.class)
     TestingDriver proxyDriver;
 
+    @Override
+    protected void addExtensions(List<Class<?>> extensions) {
+        super.addExtensions(extensions);
+        extensions.add(GrapheneRegistrar.class);
+        extensions.add(GrapheneConfigurator.class);
+    }
+
     @Before
     public void init() {
-        injector.get().inject(factory);
         addAllServices(Instantiator.class, factory, testingFactory);
         getManager().fire(new BeforeSuite());
-        GrapheneConfigurationContext.set(new GrapheneConfiguration());
+        getManager().fire(new BeforeClass(GrapheneWebDriverFactoryTestCase.class));
+        injector.get().inject(factory);
     }
 
     @Test
@@ -99,7 +109,11 @@ public class GrapheneWebDriverFactoryTestCase extends AbstractDroneTestCase {
         WebDriver createdDriver = factory.createInstance(configuration);
         createdDriver.getCurrentUrl();
         // then
-        assertTrue(GrapheneContext.isInitialized());
+        try {
+            Graphene.context();
+        } catch(IllegalStateException e) {
+            Assert.fail("The static context is not inititilizied: " + e.getMessage());
+        }
         verify(realDriver, only()).getCurrentUrl();
     }
 

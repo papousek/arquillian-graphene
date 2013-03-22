@@ -21,13 +21,16 @@
  */
 package org.jboss.arquillian.graphene.drone.factory;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.WebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.WebDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxyInstance;
 import org.openqa.selenium.WebDriver;
@@ -41,6 +44,9 @@ import org.openqa.selenium.WebDriver;
 public class GrapheneWebDriverFactory extends WebDriverFactory implements
         Configurator<WebDriver, TypedWebDriverConfiguration<WebDriverConfiguration>>,
         Instantiator<WebDriver, TypedWebDriverConfiguration<WebDriverConfiguration>>, Destructor<WebDriver> {
+
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
 
     /*
      * (non-Javadoc)
@@ -59,14 +65,10 @@ public class GrapheneWebDriverFactory extends WebDriverFactory implements
      */
     @Override
     public void destroyInstance(WebDriver instance) {
-        try {
-            if (GrapheneProxy.isProxyInstance(instance)) {
-                super.destroyInstance(((GrapheneProxyInstance) instance).<WebDriver>unwrap());
-            } else {
-                super.destroyInstance(instance);
-            }
-        } finally {
-            GrapheneContext.reset();
+        if (GrapheneProxy.isProxyInstance(instance)) {
+            super.destroyInstance(((GrapheneProxyInstance) instance).<WebDriver>unwrap());
+        } else {
+            super.destroyInstance(instance);
         }
     }
 
@@ -83,9 +85,7 @@ public class GrapheneWebDriverFactory extends WebDriverFactory implements
             return driver;
         }
 
-        WebDriver proxy = GrapheneContext.getProxyForDriver(WebDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, WebDriver.class);
     }
 
 }

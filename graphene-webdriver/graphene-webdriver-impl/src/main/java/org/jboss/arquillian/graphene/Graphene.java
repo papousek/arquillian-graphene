@@ -26,12 +26,12 @@ import org.jboss.arquillian.graphene.condition.ElementConditionFactory;
 import org.jboss.arquillian.graphene.condition.attribute.ElementAttributeConditionFactory;
 import org.jboss.arquillian.graphene.condition.element.WebElementConditionFactory;
 import org.jboss.arquillian.graphene.condition.locator.ElementLocatorConditionFactory;
-import org.jboss.arquillian.graphene.configuration.GrapheneConfiguration;
-import org.jboss.arquillian.graphene.context.GrapheneConfigurationContext;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
 import org.jboss.arquillian.graphene.enricher.PageFragmentEnricher;
+import org.jboss.arquillian.graphene.guard.RequestGuard;
 import org.jboss.arquillian.graphene.guard.RequestGuardFactory;
+import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.jboss.arquillian.graphene.page.RequestType;
+import org.jboss.arquillian.graphene.page.document.Document;
 import org.jboss.arquillian.graphene.wait.WebDriverWait;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -43,6 +43,8 @@ import org.openqa.selenium.WebElement;
  */
 public class Graphene {
 
+    private static final ThreadLocal<GrapheneContext> CONTEXT = new ThreadLocal<GrapheneContext>();
+
     /**
      * Returns an attribute condition factory which can be used to formulate
      * conditions related to the given attribute.
@@ -53,6 +55,14 @@ public class Graphene {
      */
     public static AttributeConditionFactory attribute(WebElement element, String attribute) {
         return new ElementAttributeConditionFactory(element, attribute);
+    }
+
+    public static GrapheneContext context() {
+        GrapheneContext context = CONTEXT.get();
+        if (context == null) {
+            throw new IllegalStateException("The static context in Graphene utility class is empty.");
+        }
+        return context;
     }
 
     /**
@@ -87,7 +97,7 @@ public class Graphene {
      * @return the guarded object
      */
     public static <T> T guardHttp(T target) {
-        return RequestGuardFactory.guard(target, RequestType.HTTP);
+        return getRequestGuardFactory().guard(target, RequestType.HTTP);
     }
 
     /**
@@ -100,7 +110,7 @@ public class Graphene {
      * @return the guarded object
      */
     public static <T> T guardNoRequest(T target) {
-        return RequestGuardFactory.guard(target, RequestType.NONE);
+        return getRequestGuardFactory().guard(target, RequestType.NONE);
     }
 
     /**
@@ -113,39 +123,50 @@ public class Graphene {
      * @return the guarded object
      */
     public static <T> T guardXhr(T target) {
-        return RequestGuardFactory.guard(target, RequestType.XHR);
+        return getRequestGuardFactory().guard(target, RequestType.XHR);
     }
 
     public static WebDriverWait<Void> waitAjax() {
-        return waitAjax(GrapheneContext.getProxy());
+        return waitAjax(context().getWebDriver());
     }
 
     public static WebDriverWait<Void> waitAjax(WebDriver driver) {
-        return new WebDriverWait<Void>(null, driver, getConfiguration().getWaitAjaxInterval());
+        return new WebDriverWait<Void>(null, driver, context().getConfiguration().getWaitAjaxInterval());
     }
 
     public static WebDriverWait<Void> waitGui() {
-        return waitGui(GrapheneContext.getProxy());
+        return waitGui(context().getWebDriver());
     }
 
     public static WebDriverWait<Void> waitGui(WebDriver driver) {
-        return new WebDriverWait<Void>(null, driver, getConfiguration().getWaitGuiInterval());
+        return new WebDriverWait<Void>(null, driver, context().getConfiguration().getWaitGuiInterval());
     }
 
     public static WebDriverWait<Void> waitModel() {
-        return waitModel(GrapheneContext.getProxy());
+        return waitModel(context().getWebDriver());
     }
 
     public static WebDriverWait<Void> waitModel(WebDriver driver) {
-        return new WebDriverWait<Void>(null, driver, getConfiguration().getWaitModelInterval());
+        return new WebDriverWait<Void>(null, driver, context().getConfiguration().getWaitModelInterval());
     }
 
     public static <T> T createPageFragment(Class<T> clazz, WebElement root) {
         return PageFragmentEnricher.createPageFragment(clazz, root);
     }
 
-    private static GrapheneConfiguration getConfiguration() {
-        return GrapheneConfigurationContext.getProxy();
+    private static RequestGuardFactory getRequestGuardFactory() {
+        return new RequestGuardFactory(
+                JSInterfaceFactory.create(context(), RequestGuard.class),
+                JSInterfaceFactory.create(context(), Document.class),
+                context().getConfiguration().getWaitGuardInterval());
+    }
+
+    static void reset() {
+        setContext(null);
+    }
+
+    static void setContext(GrapheneContext context) {
+        CONTEXT.set(context);
     }
 
 }

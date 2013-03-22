@@ -21,13 +21,16 @@
  */
 package org.jboss.arquillian.graphene.drone.factory;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.ChromeDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.ChromeDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 /**
@@ -40,6 +43,9 @@ public class GrapheneChromeDriverFactory extends ChromeDriverFactory implements
         Configurator<ChromeDriver, TypedWebDriverConfiguration<ChromeDriverConfiguration>>,
         Instantiator<ChromeDriver, TypedWebDriverConfiguration<ChromeDriverConfiguration>>, Destructor<ChromeDriver> {
 
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
+
     /*
      * (non-Javadoc)
      *
@@ -49,21 +55,6 @@ public class GrapheneChromeDriverFactory extends ChromeDriverFactory implements
     public int getPrecedence() {
         return 20;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-     */
-    @Override
-    public void destroyInstance(ChromeDriver instance) {
-        try {
-            super.destroyInstance(instance);
-        } finally {
-            GrapheneContext.reset();
-        }
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -72,8 +63,6 @@ public class GrapheneChromeDriverFactory extends ChromeDriverFactory implements
     @Override
     public ChromeDriver createInstance(TypedWebDriverConfiguration<ChromeDriverConfiguration> configuration) {
         ChromeDriver driver = super.createInstance(configuration);
-        ChromeDriver proxy = GrapheneContext.getProxyForDriver(ChromeDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, ChromeDriver.class);
     }
 }

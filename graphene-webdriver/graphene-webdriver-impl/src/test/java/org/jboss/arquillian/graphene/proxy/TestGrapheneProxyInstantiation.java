@@ -21,7 +21,7 @@
  */
 package org.jboss.arquillian.graphene.proxy;
 
-import org.jboss.arquillian.graphene.context.TestingDriverStub;
+import org.jboss.arquillian.graphene.TestingDriverStub;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;

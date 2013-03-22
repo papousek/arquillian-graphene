@@ -21,13 +21,16 @@
  */
 package org.jboss.arquillian.graphene.drone.factory;
 
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.drone.spi.Configurator;
 import org.jboss.arquillian.drone.spi.Destructor;
 import org.jboss.arquillian.drone.spi.Instantiator;
 import org.jboss.arquillian.drone.webdriver.configuration.HtmlUnitDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.configuration.TypedWebDriverConfiguration;
 import org.jboss.arquillian.drone.webdriver.factory.HtmlUnitDriverFactory;
-import org.jboss.arquillian.graphene.context.GrapheneContext;
+import org.jboss.arquillian.graphene.GrapheneContext;
+import org.jboss.arquillian.graphene.WebDriverProxyFactory;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
@@ -39,6 +42,9 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 public class GrapheneHtmlUnitDriverFactory extends HtmlUnitDriverFactory implements
         Configurator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>,
         Instantiator<HtmlUnitDriver, TypedWebDriverConfiguration<HtmlUnitDriverConfiguration>>, Destructor<HtmlUnitDriver> {
+
+    @Inject
+    private Instance<WebDriverProxyFactory> webDriverProxyFactory;
 
     /*
      * (non-Javadoc)
@@ -53,27 +59,11 @@ public class GrapheneHtmlUnitDriverFactory extends HtmlUnitDriverFactory impleme
     /*
      * (non-Javadoc)
      *
-     * @see org.jboss.arquillian.drone.spi.Destructor#destroyInstance(java.lang.Object)
-     */
-    @Override
-    public void destroyInstance(HtmlUnitDriver instance) {
-        try {
-            super.destroyInstance(instance);
-        } finally {
-            GrapheneContext.reset();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     @Override
     public HtmlUnitDriver createInstance(TypedWebDriverConfiguration<HtmlUnitDriverConfiguration> configuration) {
         HtmlUnitDriver driver = super.createInstance(configuration);
-        HtmlUnitDriver proxy = GrapheneContext.getProxyForDriver(HtmlUnitDriver.class);
-        GrapheneContext.set(driver);
-        return proxy;
+        return webDriverProxyFactory.get().getProxy(driver, HtmlUnitDriver.class);
     }
 }
