@@ -21,11 +21,6 @@
  */
 package org.jboss.arquillian.graphene;
 
-import org.jboss.arquillian.graphene.condition.AttributeConditionFactory;
-import org.jboss.arquillian.graphene.condition.ElementConditionFactory;
-import org.jboss.arquillian.graphene.condition.attribute.ElementAttributeConditionFactory;
-import org.jboss.arquillian.graphene.condition.element.WebElementConditionFactory;
-import org.jboss.arquillian.graphene.condition.locator.ElementLocatorConditionFactory;
 import org.jboss.arquillian.graphene.enricher.PageFragmentEnricher;
 import org.jboss.arquillian.graphene.guard.RequestGuard;
 import org.jboss.arquillian.graphene.guard.RequestGuardFactory;
@@ -35,7 +30,8 @@ import org.jboss.arquillian.graphene.page.document.Document;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxy;
 import org.jboss.arquillian.graphene.proxy.GrapheneProxyInstance;
 import org.jboss.arquillian.graphene.wait.WebDriverWait;
-import org.openqa.selenium.By;
+import org.jboss.arquillian.graphene.wait.enhaced.EnhancedElement;
+import org.jboss.arquillian.graphene.wait.enhaced.WebElementEnhancedElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -45,71 +41,8 @@ import org.openqa.selenium.WebElement;
  */
 public class Graphene {
 
-    /**
-     * <p>
-     * DEPRECATED: use fluent API instead ({@link #waitAjax()} / {@link #waitGui()} / {@link #waitModel()}
-     * and {@link WebDriverWait#until() }). For example:
-     *
-     * </p>
-     * <pre>
-     * Graphene.waitAjax().until().element(...).attribute(...).is().present();
-     * </pre>
-     * <p>
-     * Returns an attribute condition factory which can be used to formulate
-     * conditions related to the given attribute.
-     * </p>
-     *
-     * @param element element which the attribute belongs to
-     * @param attribute attribute name
-     * @see org.jboss.arquillian.graphene.wait.ElementBuilder#attribute(java.lang.String)
-     */
-    @Deprecated
-    public static AttributeConditionFactory attribute(WebElement element, String attribute) {
-        return new ElementAttributeConditionFactory(element, attribute);
-    }
-
-    /**
-     * <p>
-     * DEPRECATED: use fluent API instead ({@link #waitAjax()} / {@link #waitGui()} / {@link #waitModel()}
-     * and {@link WebDriverWait#until() }). For example:
-     *
-     * </p>
-     * <pre>
-     * Graphene.waitAjax().until().element(...).is().present();
-     * </pre>
-     * <p>
-     * Returns an element condition factory which can be used to formulate
-     * conditions related to the given element.
-     * </p>
-     *
-     * @param element
-     * @see org.jboss.arquillian.graphene.wait.FluentBuilder#element(org.openqa.selenium.WebElement)
-     */
-    @Deprecated
-    public static ElementConditionFactory element(WebElement element) {
-        return new WebElementConditionFactory(element);
-    }
-
-    /**
-     * <p>
-     * DEPRECATED: use fluent API instead ({@link #waitAjax()} / {@link #waitGui()} / {@link #waitModel()}
-     * and {@link WebDriverWait#until() }). For example:
-     *
-     * </p>
-     * <pre>
-     * Graphene.waitAjax().until().element(...).is().present();
-     * </pre>
-     * <p>
-     * Returns an element condition factory which can be used to formulate
-     * conditions related to the element determined by the given locater.
-     * </p>
-     *
-     * @param locator
-     * @see org.jboss.arquillian.graphene.wait.FluentBuilder#element(org.openqa.selenium.By)
-     */
-    @Deprecated
-    public static ElementConditionFactory element(By locator) {
-        return new ElementLocatorConditionFactory(locator);
+    public static EnhancedElement element(WebElement element) {
+        return new WebElementEnhancedElement(element);
     }
 
     /**
