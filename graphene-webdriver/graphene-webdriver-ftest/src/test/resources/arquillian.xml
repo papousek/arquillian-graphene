@@ -27,8 +27,11 @@
 
     <extension qualifier="webdriver">
         <property name="browserCapabilities">${browser}</property>
+        <property name="remote">${remote}</property>
+        <property name="os">${os}</property>
+        <property name="browser-version">${browser.version}</property>
         <property name="remoteReusable">${remoteReusable}</property>
-        <property name="remoteAddress">http://localhost:4444/wd/hub/</property>
+        <property name="remoteAddress">${remoteAddress}</property>
         <property name="javascriptEnabled">true</property>
         <property name="chromeDriverBinary">/opt/google/chrome/chromedriver</property>
     </extension>
